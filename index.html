@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Teólogo de Bolso PRO</title>
+<meta name="theme-color" content="#3E2A4F" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#F6F1E8; --surface:#FFFFFF; --surface-2:#FBF8F1;
+    --purple:#3E2A4F; --purple-2:#5A3D6E; --gold:#C6A75E; --gold-soft:#E0C98F;
+    --text:#2E2433; --text-soft:#8B7A9B; --border:rgba(198,167,94,.30);
+    --shadow:0 6px 22px rgba(62,42,79,.08);
+    --display:'Playfair Display',Georgia,serif;
+    --accent:'Cormorant Garamond',Georgia,serif;
+    --body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  [data-theme="dark"]{
+    --bg:#211A2B; --surface:#2E2438; --surface-2:#352A41;
+    --text:#F2ECE4; --text-soft:#B6A6C4; --border:rgba(198,167,94,.32);
+    --shadow:0 6px 22px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);
+    line-height:1.6;padding-bottom:84px;transition:background .25s,color .25s;}
+  .wrap{max-width:680px;margin:0 auto;padding:18px 16px 0;}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+  .saud{display:flex;align-items:center;gap:12px;}
+  .brand-ic{width:52px;height:52px;border-radius:50%;flex:none;}
+  .saud h2{font-family:var(--accent);font-size:1.45rem;margin:0;font-weight:600;}
+  .saud p{margin:0;color:var(--text-soft);font-size:.86rem;}
+  .htools{display:flex;gap:8px;}
+  .htools button{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--border);
+    background:var(--surface);color:var(--purple);display:grid;place-items:center;cursor:pointer;}
+  [data-theme="dark"] .htools button{color:var(--gold-soft);}
+
+  .hero{text-align:center;margin:14px 0 6px;}
+  .hero h1{font-family:var(--display);color:var(--purple);font-weight:700;
+    font-size:2.5rem;line-height:1.05;margin:0;}
+  [data-theme="dark"] .hero h1{color:var(--gold-soft);}
+  .divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:12px 0 6px;color:var(--gold);}
+  .divider::before,.divider::after{content:"";height:1px;width:64px;background:var(--gold);opacity:.6;}
+  .hero .slogan{color:var(--text-soft);letter-spacing:.16em;text-transform:uppercase;font-size:.74rem;margin:0 0 4px;}
+
+  .section-label{font-family:var(--accent);font-size:1.25rem;color:var(--purple);font-weight:600;margin:18px 4px 10px;}
+  [data-theme="dark"] .section-label{color:var(--gold-soft);}
+
+  .tasks{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .task{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;
+    box-shadow:var(--shadow);cursor:pointer;text-align:left;transition:transform .12s,border-color .15s;}
+  .task:active{transform:scale(.98);}
+  .task.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset, var(--shadow);}
+  .task .circ{width:46px;height:46px;border-radius:50%;background:var(--purple);
+    display:grid;place-items:center;margin-bottom:10px;}
+  .task .circ svg{stroke:var(--gold-soft);}
+  .task h3{font-family:var(--accent);font-size:1.18rem;margin:0 0 2px;font-weight:600;color:var(--text);}
+  .task p{margin:0;font-size:.82rem;color:var(--text-soft);}
+
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;
+    box-shadow:var(--shadow);padding:16px;margin-top:16px;}
+  .field{position:relative;}
+  textarea#pergunta{width:100%;min-height:92px;resize:vertical;border:1px solid var(--border);
+    border-radius:14px;padding:13px 48px 13px 14px;font-family:var(--body);font-size:1rem;
+    background:var(--surface-2);color:var(--text);outline:none;}
+  textarea#pergunta:focus{border-color:var(--gold);}
+  .mic{position:absolute;right:8px;bottom:8px;width:38px;height:38px;border-radius:50%;
+    border:none;background:var(--purple);color:var(--gold-soft);display:grid;place-items:center;cursor:pointer;}
+  .mic.rec{background:#a8324a;animation:pulse 1.1s infinite;}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(168,50,74,.5);}50%{box-shadow:0 0 0 8px rgba(168,50,74,0);}}
+
+  .levels-label{font-size:.82rem;color:var(--text-soft);margin:14px 2px 8px;}
+  .levels{display:flex;gap:8px;}
+  .levels button{flex:1;padding:9px 0;border-radius:12px;border:1px solid var(--border);
+    background:var(--surface-2);color:var(--text-soft);font-family:var(--body);font-size:.84rem;cursor:pointer;}
+  .levels button.sel{background:var(--purple);color:#fff;border-color:var(--purple);}
+  .level-desc{font-size:.78rem;color:var(--text-soft);margin:8px 2px 0;min-height:1.1em;}
+
+  .btn-main{width:100%;margin-top:16px;padding:15px;border:none;border-radius:30px;cursor:pointer;
+    background:var(--purple);color:#fff;font-family:var(--accent);font-size:1.2rem;font-weight:600;
+    display:flex;align-items:center;justify-content:center;gap:10px;}
+  .btn-main:disabled{opacity:.6;}
+  .btn-main svg{stroke:var(--gold-soft);}
+
+  .suggest{margin-top:10px;}
+  .chip{display:inline-block;background:var(--surface);border:1px solid var(--border);border-radius:20px;
+    padding:8px 14px;margin:4px 6px 4px 0;font-size:.85rem;color:var(--purple);cursor:pointer;}
+  [data-theme="dark"] .chip{color:var(--gold-soft);}
+
+  /* Resposta */
+  .ref{font-family:var(--display);color:var(--gold);font-weight:600;font-size:1.05rem;letter-spacing:.02em;}
+  .answer{font-size:1.02rem;}
+  .answer h2{font-family:var(--accent);color:var(--purple);font-size:1.4rem;margin:18px 0 6px;}
+  .answer h3{font-family:var(--accent);color:var(--purple);font-size:1.18rem;margin:14px 0 4px;}
+  [data-theme="dark"] .answer h2,[data-theme="dark"] .answer h3{color:var(--gold-soft);}
+  .answer strong{color:var(--purple);}
+  [data-theme="dark"] .answer strong{color:var(--gold-soft);}
+  .answer ul{padding-left:20px;}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;border-top:1px solid var(--border);padding-top:14px;}
+  .act{display:flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);
+    border-radius:20px;padding:9px 14px;font-size:.84rem;color:var(--text);cursor:pointer;}
+  .act svg{stroke:var(--purple);}
+  [data-theme="dark"] .act svg{stroke:var(--gold-soft);}
+  .act.on svg{fill:#a8324a;stroke:#a8324a;}
+  .back{background:none;border:none;color:var(--text-soft);font-size:.95rem;cursor:pointer;
+    display:flex;align-items:center;gap:6px;padding:4px 0;margin-bottom:6px;}
+
+  .verses{margin-top:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:12px;}
+  .verses .v{padding:7px 0;border-bottom:1px dashed var(--border);font-size:.92rem;}
+  .verses .v:last-child{border:none;}
+  .verses .vr{color:var(--gold);font-weight:600;display:block;font-family:var(--accent);font-size:1.02rem;}
+
+  .item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 14px;
+    margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer;}
+  .item .meta{font-size:.74rem;color:var(--text-soft);text-transform:uppercase;letter-spacing:.08em;}
+  .item .q{font-family:var(--accent);font-size:1.12rem;color:var(--text);margin:2px 0;}
+  .empty{text-align:center;color:var(--text-soft);padding:40px 16px;font-family:var(--accent);font-size:1.2rem;}
+
+  .about p{color:var(--text-soft);font-size:.92rem;}
+  .danger{background:none;border:1px solid #a8324a;color:#a8324a;border-radius:20px;padding:10px 16px;cursor:pointer;}
+
+  .loader{display:none;text-align:center;padding:24px;color:var(--text-soft);font-family:var(--accent);font-size:1.15rem;}
+  .loader.on{display:block;}
+  .spin{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--gold);
+    border-radius:50%;margin:0 auto 10px;animation:rot 1s linear infinite;}
+  @keyframes rot{to{transform:rotate(360deg);}}
+
+  .screen{display:none;}.screen.on{display:block;}
+
+  nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--border);
+    display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:20;}
+  nav button{background:none;border:none;color:var(--text-soft);font-size:.7rem;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:3px;font-family:var(--body);}
+  nav button.sel{color:var(--purple);}
+  [data-theme="dark"] nav button.sel{color:var(--gold-soft);}
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--purple);color:#fff;
+    padding:10px 18px;border-radius:24px;font-size:.88rem;opacity:0;pointer-events:none;transition:opacity .25s;z-index:30;}
+  .toast.on{opacity:1;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="saud">
+      <img class="brand-ic" src="icon-192.png" alt="Teólogo de Bolso PRO" />
+      <div>
+        <h2>Olá, irmão(ã)</h2>
+        <p>Que Deus abençoe o seu estudo!</p>
+      </div>
+    </div>
+    <div class="htools">
+      <button id="btn-tema" title="Modo claro/escuro" aria-label="Alternar tema">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== INÍCIO ===== -->
+  <section id="tela-inicio" class="screen on">
+    <div class="hero">
+      <h1>Teólogo de Bolso<br>PRO</h1>
+      <div class="divider">&#10047;</div>
+      <p class="slogan">Pesquisa bíblica avançada ao alcance da sua mão</p>
+    </div>
+
+    <div class="section-label">O que você quer fazer?</div>
+    <div class="tasks" id="tasks">
+      <button class="task sel" data-task="analisar">
+        <span class="circ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M4 5h11M4 9h11M4 13h7"/><path d="M16 14l3 3 4-5"/></svg></span>
+        <h3>Analisar texto</h3><p>Exegese de uma passagem</p>
+      </button>
+      <button class="task" data-task="sermao">
+        <span class="circ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 3v10"/><rect x="9" y="3" width="6" height="9" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg></span>
+        <h3>Gerar sermão</h3><p>Expositivo, com pontos</p>
+      </button>
+      <button class="task" data-task="celula">
+        <span class="circ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 1.5-3.5 4-3.5"/></svg></span>
+        <h3>Estudo de célula</h3><p>Roteiro participativo</p>
+      </button>
+      <button class="task" data-task="aula">
+        <span class="circ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M7 9.5V14c0 1.7 2.2 3 5 3s5-1.3 5-3V9.5M21 7v5"/></svg></span>
+        <h3>Aula / palestra</h3><p>Objetivos e atividades</p>
+      </button>
+    </div>
+
+    <div class="panel">
+      <div class="field">
+        <textarea id="pergunta" placeholder="Digite um texto, tema ou pergunta. Ex.: Romanos 8:28-39"></textarea>
+        <button class="mic" id="btn-mic" title="Falar" aria-label="Falar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        </button>
+      </div>
+
+      <div class="levels-label">Profundidade</div>
+      <div class="levels" id="levels">
+        <button data-n="1">Nível 1</button>
+        <button class="sel" data-n="2">Nível 2</button>
+        <button data-n="3">Nível 3</button>
+        <button data-n="4">Nível 4</button>
+      </div>
+      <div class="level-desc" id="level-desc">Estudo intermediário — equilibrado e acessível.</div>
+
+      <button class="btn-main" id="btn-gerar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        Pesquisar
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== RESPOSTA ===== -->
+  <section id="tela-resposta" class="screen">
+    <button class="back" id="btn-voltar">&#8592; Voltar</button>
+    <div class="loader" id="loader"><div class="spin"></div>Preparando o estudo…</div>
+    <div class="panel" id="resp-panel" style="display:none">
+      <div class="ref" id="resp-ref"></div>
+      <div class="answer" id="resp-body"></div>
+      <div class="actions">
+        <button class="act" id="act-fav"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg>Favoritar</button>
+        <button class="act" id="act-ouvir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9v6h4l5 4V5L8 9H4zM17 8a5 5 0 0 1 0 8"/></svg>Ouvir</button>
+        <button class="act" id="act-share"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 11l8-4M8 13l8 4"/></svg>Compartilhar</button>
+        <button class="act" id="act-baixar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 11l5 4 5-4M5 21h14"/></svg>Baixar</button>
+        <button class="act" id="act-versiculos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a3 3 0 0 1 3-3h13v17H7a3 3 0 0 0-3 3z"/></svg>Versículos</button>
+      </div>
+      <div id="verses-box"></div>
+    </div>
+  </section>
+
+  <!-- ===== EXPLORAR ===== -->
+  <section id="tela-explorar" class="screen">
+    <div class="section-label">Perguntas para explorar</div>
+    <div class="suggest" id="suggest"></div>
+  </section>
+
+  <!-- ===== FAVORITOS ===== -->
+  <section id="tela-favoritos" class="screen">
+    <div class="section-label">Seus favoritos</div>
+    <div id="fav-list"></div>
+  </section>
+
+  <!-- ===== PERFIL ===== -->
+  <section id="tela-perfil" class="screen">
+    <div class="section-label">Perfil</div>
+    <div class="panel about">
+      <p><strong>Teólogo de Bolso PRO</strong> — pesquisa bíblica avançada para estudo, ensino, pregação e formação ministerial, segundo a linha doutrinária da Igreja Vidas.</p>
+      <p>As respostas são geradas por inteligência artificial e devem ser conferidas à luz das Escrituras.</p>
+    </div>
+    <div class="section-label">Histórico</div>
+    <div id="hist-list"></div>
+    <div style="text-align:center;margin:14px 0;">
+      <button class="danger" id="btn-limpar">Limpar histórico</button>
+    </div>
+  </section>
+
+</div>
+
+<nav>
+  <button class="sel" data-go="inicio"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-7 9 7v8a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Início</button>
+  <button data-go="explorar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 4-4 2 2-4z"/></svg>Explorar</button>
+  <button data-go="favoritos"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg>Favoritos</button>
+  <button data-go="perfil"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Perfil</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "/api/ask";
+const LEVEL_DESC = {
+  "1":"Resumo devocional — breve e edificante.",
+  "2":"Estudo intermediário — equilibrado e acessível.",
+  "3":"Análise avançada — exegese e termos técnicos.",
+  "4":"Dossiê completo — tratamento abrangente e detalhado."
+};
+const SUGESTOES = [
+  "João 3:16","Salmo 23","Romanos 8:28-39","O que é a graça?",
+  "Quem é o Espírito Santo?","Mateus 5:14-16","Efésios 4:11-16",
+  "O que a Bíblia ensina sobre o batismo?","1 Pedro 2:9","Gênesis 12:1-3"
+];
+let estado = { tarefa:"analisar", nivel:"2", atual:null, falando:false };
+
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+/* ---- tema ---- */
+function aplicarTema(t){ document.documentElement.setAttribute("data-theme", t);
+  try{ localStorage.setItem("tbp_tema", t); }catch(e){} }
+(function(){ let t="light"; try{ t=localStorage.getItem("tbp_tema")||"light"; }catch(e){}
+  if(t==="dark") aplicarTema("dark"); })();
+$("#btn-tema").onclick = () => aplicarTema(
+  document.documentElement.getAttribute("data-theme")==="dark" ? "light":"dark");
+
+/* ---- navegação ---- */
+function mostrar(id){ $$(".screen").forEach(s=>s.classList.remove("on"));
+  $("#tela-"+id).classList.add("on"); window.scrollTo(0,0); }
+$$("nav button").forEach(b=> b.onclick = () => {
+  $$("nav button").forEach(x=>x.classList.remove("sel")); b.classList.add("sel");
+  const go=b.dataset.go; mostrar(go);
+  if(go==="favoritos") renderLista("fav");
+  if(go==="perfil") renderLista("hist");
+});
+function irInicio(){ $$("nav button").forEach(x=>x.classList.remove("sel"));
+  $('nav button[data-go="inicio"]').classList.add("sel"); mostrar("inicio"); }
+
+/* ---- seleção de tarefa e nível ---- */
+$$("#tasks .task").forEach(t=> t.onclick = () => {
+  $$("#tasks .task").forEach(x=>x.classList.remove("sel")); t.classList.add("sel");
+  estado.tarefa = t.dataset.task; });
+$$("#levels button").forEach(b=> b.onclick = () => {
+  $$("#levels button").forEach(x=>x.classList.remove("sel")); b.classList.add("sel");
+  estado.nivel = b.dataset.n; $("#level-desc").textContent = LEVEL_DESC[b.dataset.n]; });
+
+/* ---- microfone ---- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
+$("#btn-mic").onclick = () => {
+  if(!SR){ toast("Seu navegador não suporta o microfone."); return; }
+  if(estado.gravando){ rec && rec.stop(); return; }
+  rec = new SR(); rec.lang="pt-BR"; rec.interimResults=false;
+  rec.onstart = ()=>{ estado.gravando=true; $("#btn-mic").classList.add("rec"); };
+  rec.onend   = ()=>{ estado.gravando=false; $("#btn-mic").classList.remove("rec"); };
+  rec.onerror = ()=>{ toast("Não consegui ouvir. Tente de novo."); };
+  rec.onresult = e => { const t = e.results[0][0].transcript;
+    const ta=$("#pergunta"); ta.value = (ta.value? ta.value+" ":"") + t; };
+  rec.start();
+};
+
+/* ---- markdown simples -> html (com escape) ---- */
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function inline(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>"); }
+function mdToHtml(md){
+  const linhas = md.split(/\r?\n/); let out=[]; let emLista=false;
+  const fechaLista=()=>{ if(emLista){ out.push("</ul>"); emLista=false; } };
+  for(let ln of linhas){
+    const l = ln.trim();
+    if(l===""){ fechaLista(); continue; }
+    if(l.startsWith("### ")){ fechaLista(); out.push("<h3>"+inline(l.slice(4))+"</h3>"); }
+    else if(l.startsWith("## ")){ fechaLista(); out.push("<h2>"+inline(l.slice(3))+"</h2>"); }
+    else if(l.startsWith("# ")){ fechaLista(); out.push("<h2>"+inline(l.slice(2))+"</h2>"); }
+    else if(/^[-*]\s+/.test(l)){ if(!emLista){ out.push("<ul>"); emLista=true; }
+      out.push("<li>"+inline(l.replace(/^[-*]\s+/,""))+"</li>"); }
+    else { fechaLista(); out.push("<p>"+inline(l)+"</p>"); }
+  }
+  fechaLista(); return out.join("");
+}
+
+/* ---- gerar resposta ---- */
+$("#btn-gerar").onclick = gerar;
+async function gerar(){
+  const q = $("#pergunta").value.trim();
+  if(!q){ toast("Digite um texto, tema ou pergunta."); return; }
+  irInicio(); $$("nav button").forEach(x=>x.classList.remove("sel"));
+  mostrar("resposta");
+  $("#loader").classList.add("on"); $("#resp-panel").style.display="none";
+  $("#verses-box").innerHTML="";
+  try{
+    const r = await fetch(API,{ method:"POST", headers:{"content-type":"application/json"},
+      body: JSON.stringify({ mode:"answer", question:q, tarefa:estado.tarefa, nivel:estado.nivel }) });
+    const data = await r.json();
+    if(data.error){ throw new Error(data.error); }
+    let texto = data.text || ""; let ref = "";
+    const m = texto.match(/^\s*REFER[EÊ]NCIA: ?(.+)$/im);
+    if(m){ ref = m[1].trim(); texto = texto.replace(m[0], "").trim(); }
+    estado.atual = { id:Date.now(), tarefa:estado.tarefa, nivel:estado.nivel,
+      pergunta:q, referencia:ref, texto, data:new Date().toISOString() };
+    $("#resp-ref").textContent = ref;
+    $("#resp-body").innerHTML = mdToHtml(texto);
+    $("#act-fav").classList.toggle("on", ehFavorito(estado.atual));
+    $("#loader").classList.remove("on"); $("#resp-panel").style.display="block";
+    salvarHistorico(estado.atual);
+  }catch(e){
+    $("#loader").classList.remove("on"); $("#resp-panel").style.display="block";
+    $("#resp-ref").textContent="";
+    $("#resp-body").innerHTML="<p>Não foi possível gerar agora. Verifique a conexão e tente novamente.</p>";
+  }
+}
+$("#btn-voltar").onclick = irInicio;
+
+/* ---- ouvir ---- */
+$("#act-ouvir").onclick = () => {
+  if(!("speechSynthesis" in window)){ toast("Áudio não suportado."); return; }
+  if(estado.falando){ speechSynthesis.cancel(); estado.falando=false; return; }
+  const u = new SpeechSynthesisUtterance(
+    (estado.atual.referencia? estado.atual.referencia+". ":"") +
+    estado.atual.texto.replace(/[#*_>-]/g," "));
+  u.lang="pt-BR"; u.rate=1; u.onend=()=>estado.falando=false;
+  estado.falando=true; speechSynthesis.speak(u);
+};
+
+/* ---- compartilhar ---- */
+$("#act-share").onclick = async () => {
+  const txt = (estado.atual.referencia? estado.atual.referencia+"\n\n":"") +
+    estado.atual.texto + "\n\n— Teólogo de Bolso PRO";
+  if(navigator.share){ try{ await navigator.share({ title:"Teólogo de Bolso PRO", text:txt }); }catch(e){} }
+  else { try{ await navigator.clipboard.writeText(txt); toast("Copiado!"); }catch(e){ toast("Não foi possível compartilhar."); } }
+};
+
+/* ---- baixar ---- */
+$("#act-baixar").onclick = () => {
+  const txt = (estado.atual.referencia? estado.atual.referencia+"\n\n":"") + estado.atual.texto +
+    "\n\n— Teólogo de Bolso PRO";
+  const nome = (estado.atual.tarefa+"-"+(estado.atual.referencia||"estudo")).replace(/[^\wÀ-ÿ-]+/g,"_")+".txt";
+  const blob = new Blob([txt],{type:"text/plain;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=nome;
+  document.body.appendChild(a); a.click(); a.remove();
+};
+
+/* ---- versículos relacionados ---- */
+$("#act-versiculos").onclick = async () => {
+  const box=$("#verses-box");
+  box.innerHTML='<div class="loader on"><div class="spin"></div>Buscando versículos…</div>';
+  try{
+    const r=await fetch(API,{ method:"POST", headers:{"content-type":"application/json"},
+      body: JSON.stringify({ mode:"verses", question: estado.atual.pergunta || estado.atual.referencia }) });
+    const data=await r.json();
+    const linhas=(data.text||"").split(/\r?\n/).filter(l=>l.includes("::"));
+    if(!linhas.length){ box.innerHTML='<div class="verses">Nenhum versículo encontrado.</div>'; return; }
+    box.innerHTML='<div class="verses">'+linhas.map(l=>{ const [ref,...t]=l.split("::");
+      return '<div class="v"><span class="vr">'+esc(ref.trim())+'</span>'+esc(t.join("::").trim())+'</div>'; }).join("")+'</div>';
+  }catch(e){ box.innerHTML='<div class="verses">Não foi possível buscar agora.</div>'; }
+};
+
+/* ---- favoritos / histórico (localStorage) ---- */
+function ler(k){ try{ return JSON.parse(localStorage.getItem(k)||"[]"); }catch(e){ return []; } }
+function grav(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function ehFavorito(it){ return ler("tbp_fav").some(x=>x.pergunta===it.pergunta && x.tarefa===it.tarefa && x.nivel===it.nivel); }
+$("#act-fav").onclick = () => {
+  let f=ler("tbp_fav"); const it=estado.atual;
+  if(ehFavorito(it)){ f=f.filter(x=>!(x.pergunta===it.pergunta && x.tarefa===it.tarefa && x.nivel===it.nivel));
+    $("#act-fav").classList.remove("on"); toast("Removido dos favoritos."); }
+  else { f.unshift(it); $("#act-fav").classList.add("on"); toast("Adicionado aos favoritos!"); }
+  grav("tbp_fav", f);
+};
+function salvarHistorico(it){ let h=ler("tbp_hist"); h.unshift(it); if(h.length>60) h=h.slice(0,60); grav("tbp_hist",h); }
+const NOME_TAREFA={analisar:"Análise",sermao:"Sermão",celula:"Célula",aula:"Aula"};
+function renderLista(tipo){
+  const dados = tipo==="fav" ? ler("tbp_fav") : ler("tbp_hist");
+  const alvo = tipo==="fav" ? $("#fav-list") : $("#hist-list");
+  if(!dados.length){ alvo.innerHTML='<div class="empty">'+(tipo==="fav"?"Nenhum favorito ainda.":"Nada no histórico ainda.")+'</div>'; return; }
+  alvo.innerHTML = dados.map((it,i)=>(
+    '<div class="item" data-tipo="'+tipo+'" data-i="'+i+'">'+
+    '<div class="meta">'+(NOME_TAREFA[it.tarefa]||"Estudo")+' &middot; Nível '+it.nivel+'</div>'+
+    '<div class="q">'+esc(it.pergunta)+'</div>'+
+    (it.referencia?'<div class="ref">'+esc(it.referencia)+'</div>':'')+'</div>'
+  )).join("");
+  alvo.querySelectorAll(".item").forEach(el=> el.onclick=()=>{
+    const arr = el.dataset.tipo==="fav"? ler("tbp_fav"):ler("tbp_hist");
+    abrirItem(arr[+el.dataset.i]); });
+}
+function abrirItem(it){ estado.atual=it; mostrar("resposta");
+  $$("nav button").forEach(x=>x.classList.remove("sel"));
+  $("#loader").classList.remove("on"); $("#resp-panel").style.display="block"; $("#verses-box").innerHTML="";
+  $("#resp-ref").textContent=it.referencia||""; $("#resp-body").innerHTML=mdToHtml(it.texto);
+  $("#act-fav").classList.toggle("on", ehFavorito(it)); window.scrollTo(0,0); }
+$("#btn-limpar").onclick = () => { grav("tbp_hist",[]); renderLista("hist"); toast("Histórico limpo."); };
+
+/* ---- explorar ---- */
+$("#suggest").innerHTML = SUGESTOES.map(s=>'<span class="chip">'+esc(s)+'</span>').join("");
+$$("#suggest .chip").forEach(c=> c.onclick=()=>{ $("#pergunta").value=c.textContent; irInicio(); $("#pergunta").focus(); });
+
+/* ---- toast ---- */
+let toastTimer;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("on"),2200); }
+
+/* ---- service worker (PWA) ---- */
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>{
+  navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
+</script>
+</body>
+</html>

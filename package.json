@@ -1,0 +1,9 @@
+{
+  "name": "teologia-de-bolso",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Teólogo de Bolso PRO — pesquisa bíblica avançada (Igreja Vidas)",
+  "engines": {
+    "node": ">=18.x"
+  }
+}
