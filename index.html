@@ -113,6 +113,11 @@
   .answer strong{color:var(--purple);}
   [data-theme="dark"] .answer strong{color:var(--gold-soft);}
   .answer ul{padding-left:20px;}
+  .answer .md-tab-wrap{overflow-x:auto;margin:12px 0;-webkit-overflow-scrolling:touch;}
+  .answer table.md-tab{border-collapse:collapse;width:100%;font-size:.9rem;}
+  .answer table.md-tab th,.answer table.md-tab td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top;}
+  .answer table.md-tab th{background:var(--surface-2);color:var(--purple);font-family:var(--accent);font-weight:600;}
+  [data-theme="dark"] .answer table.md-tab th{color:var(--gold-soft);}
   .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;border-top:1px solid var(--border);padding-top:14px;}
   .act{display:flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);
     border-radius:20px;padding:9px 14px;font-size:.84rem;color:var(--text);cursor:pointer;}
@@ -385,19 +390,26 @@ $("#btn-mic").onclick = () => {
 /* ---- markdown simples -> html (com escape) ---- */
 function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function inline(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>"); }
+function mdCelulas(linha){ let s=linha.trim(); if(s.startsWith("|")) s=s.slice(1); if(s.endsWith("|")) s=s.slice(0,-1); return s.split("|").map(c=>c.trim()); }
+function ehSep(l){ return /^\|?[\s:|-]+\|?$/.test(l) && l.includes("-"); }
 function mdToHtml(md){
-  const linhas = md.split(/\r?\n/); let out=[]; let emLista=false;
+  const L = md.split(/\r?\n/); let out=[]; let emLista=false; let i=0;
   const fechaLista=()=>{ if(emLista){ out.push("</ul>"); emLista=false; } };
-  for(let ln of linhas){
-    const l = ln.trim();
-    if(l===""){ fechaLista(); continue; }
-    if(/^[-*_]{3,}$/.test(l)){ fechaLista(); continue; }
-    if(l.startsWith("### ")){ fechaLista(); out.push("<h3>"+inline(l.slice(4))+"</h3>"); }
-    else if(l.startsWith("## ")){ fechaLista(); out.push("<h2>"+inline(l.slice(3))+"</h2>"); }
-    else if(l.startsWith("# ")){ fechaLista(); out.push("<h2>"+inline(l.slice(2))+"</h2>"); }
-    else if(/^[-*]\s+/.test(l)){ if(!emLista){ out.push("<ul>"); emLista=true; }
-      out.push("<li>"+inline(l.replace(/^[-*]\s+/,""))+"</li>"); }
-    else { fechaLista(); out.push("<p>"+inline(l)+"</p>"); }
+  while(i<L.length){
+    const l = L[i].trim();
+    if(l===""){ fechaLista(); i++; continue; }
+    if(l.startsWith("|") && i+1<L.length && ehSep(L[i+1].trim())){
+      fechaLista(); const head=mdCelulas(l); i+=2; const body=[];
+      while(i<L.length && L[i].trim().startsWith("|")){ body.push(mdCelulas(L[i].trim())); i++; }
+      let t='<div class="md-tab-wrap"><table class="md-tab"><thead><tr>'+head.map(c=>"<th>"+inline(c)+"</th>").join("")+"</tr></thead><tbody>";
+      t+=body.map(r=>"<tr>"+r.map(c=>"<td>"+inline(c)+"</td>").join("")+"</tr>").join("");
+      t+="</tbody></table></div>"; out.push(t); continue;
+    }
+    if(/^[-*_]{3,}$/.test(l)){ fechaLista(); i++; continue; }
+    const h=l.match(/^(#{1,6})\s+(.*)$/);
+    if(h){ fechaLista(); const tag=(h[1].length<=2)?"h2":"h3"; out.push("<"+tag+">"+inline(h[2])+"</"+tag+">"); i++; continue; }
+    if(/^[-*]\s+/.test(l)){ if(!emLista){ out.push("<ul>"); emLista=true; } out.push("<li>"+inline(l.replace(/^[-*]\s+/,""))+"</li>"); i++; continue; }
+    fechaLista(); out.push("<p>"+inline(l)+"</p>"); i++;
   }
   fechaLista(); return out.join("");
 }
@@ -463,18 +475,37 @@ function runsMd(t,d){ const out=[]; const re=/\*\*(.+?)\*\*/g; let last=0,m;
   if(last<t.length) out.push(new d.TextRun(t.slice(last)));
   return out.length?out:[new d.TextRun(t)]; }
 async function gerarDocx(it){
-  const d=window.docx; const ROXO="3E2A4F"; const P=[];
-  P.push(new d.Paragraph({children:[new d.TextRun({text:"Teólogo de Bolso PRO",bold:true,color:"8B7A9B",size:18})]}));
-  if(it.referencia) P.push(new d.Paragraph({children:[new d.TextRun({text:it.referencia,bold:true,color:"C6A75E",size:30})],spacing:{after:200}}));
-  it.texto.split(/\r?\n/).forEach(ln=>{ const l=ln.trim(); if(!l) return;
-    if(/^[-*_]{3,}$/.test(l)) return;
-    if(l.startsWith("### ")) P.push(new d.Paragraph({children:[new d.TextRun({text:l.slice(4),bold:true,color:ROXO,size:24})],spacing:{before:160,after:60}}));
-    else if(l.startsWith("## ")) P.push(new d.Paragraph({children:[new d.TextRun({text:l.slice(3),bold:true,color:ROXO,size:28})],spacing:{before:200,after:80}}));
-    else if(l.startsWith("# ")) P.push(new d.Paragraph({children:[new d.TextRun({text:l.slice(2),bold:true,color:ROXO,size:28})],spacing:{before:200,after:80}}));
-    else if(/^[-*]\s+/.test(l)) P.push(new d.Paragraph({children:runsMd(l.replace(/^[-*]\s+/,""),d),bullet:{level:0},spacing:{after:40}}));
-    else P.push(new d.Paragraph({children:runsMd(l,d),spacing:{after:120}})); });
-  P.push(new d.Paragraph({children:[new d.TextRun({text:"O objetivo final da teologia não é apenas informar a mente, mas transformar a vida à luz da Palavra de Deus.",italics:true,color:"8B7A9B",size:18})],spacing:{before:280}}));
-  const doc=new d.Document({sections:[{children:P}]});
+  const d=window.docx; const ROXO="3E2A4F"; const out=[];
+  const B={style:d.BorderStyle.SINGLE,size:4,color:"D9CBA8"};
+  function cel(l){let s=l.trim();if(s.startsWith("|"))s=s.slice(1);if(s.endsWith("|"))s=s.slice(0,-1);return s.split("|").map(c=>c.trim());}
+  function sep(l){return /^\|?[\s:|-]+\|?$/.test(l)&&l.includes("-");}
+  function tabela(head,body){
+    const row=(arr,hd)=>new d.TableRow({children:arr.map(c=>new d.TableCell({
+      margins:{top:40,bottom:40,left:90,right:90}, shading:hd?{fill:"EFE7D6"}:undefined,
+      children:[new d.Paragraph({children: hd?[new d.TextRun({text:c.replace(/\*\*/g,""),bold:true})]:runsMd(c,d)})]}))});
+    return new d.Table({width:{size:100,type:d.WidthType.PERCENTAGE},
+      borders:{top:B,bottom:B,left:B,right:B,insideHorizontal:B,insideVertical:B},
+      rows:[row(head,true),...body.map(r=>row(r,false))]});
+  }
+  out.push(new d.Paragraph({children:[new d.TextRun({text:"Teólogo de Bolso PRO",bold:true,color:"8B7A9B",size:18})]}));
+  if(it.referencia) out.push(new d.Paragraph({children:[new d.TextRun({text:it.referencia,bold:true,color:"C6A75E",size:30})],spacing:{after:200}}));
+  const L=it.texto.split(/\r?\n/); let i=0;
+  while(i<L.length){
+    const l=L[i].trim();
+    if(l===""){ i++; continue; }
+    if(/^[-*_]{3,}$/.test(l)){ i++; continue; }
+    if(l.startsWith("|") && i+1<L.length && sep(L[i+1].trim())){
+      const head=cel(l); i+=2; const body=[];
+      while(i<L.length && L[i].trim().startsWith("|")){ body.push(cel(L[i].trim())); i++; }
+      out.push(tabela(head,body)); out.push(new d.Paragraph({text:"",spacing:{after:80}})); continue;
+    }
+    const h=l.match(/^(#{1,6})\s+(.*)$/);
+    if(h){ const sz=(h[1].length<=2)?28:24; out.push(new d.Paragraph({children:[new d.TextRun({text:h[2],bold:true,color:ROXO,size:sz})],spacing:{before:180,after:70}})); i++; continue; }
+    if(/^[-*]\s+/.test(l)){ out.push(new d.Paragraph({children:runsMd(l.replace(/^[-*]\s+/,""),d),bullet:{level:0},spacing:{after:40}})); i++; continue; }
+    out.push(new d.Paragraph({children:runsMd(l,d),spacing:{after:120}})); i++;
+  }
+  out.push(new d.Paragraph({children:[new d.TextRun({text:"O objetivo final da teologia não é apenas informar a mente, mas transformar a vida à luz da Palavra de Deus.",italics:true,color:"8B7A9B",size:18})],spacing:{before:280}}));
+  const doc=new d.Document({sections:[{children:out}]});
   return d.Packer.toBlob(doc);
 }
 $("#act-baixar").onclick = async () => {
