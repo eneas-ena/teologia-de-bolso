@@ -2,7 +2,7 @@
 
 Pesquisa bíblica avançada ao alcance da sua mão — app da **Igreja Vidas**.
 
-O usuário escolhe uma **tarefa** (Analisar texto, Sermão, Estudo de célula ou Aula) e um **nível de profundidade (1 a 4)**, digita ou dita um texto/tema, e recebe a resposta gerada por inteligência artificial, segundo a linha doutrinária da Igreja Vidas. Pode favoritar, ouvir, compartilhar, baixar e ver versículos relacionados.
+O usuário escolhe uma **tarefa** (Analisar texto, Sermão, Estudo de célula, Aula ou um dos 7 **enfoques avançados** em "Estudo especializado") e um **nível de profundidade (1 a 4)**, digita ou dita um texto/tema, e recebe a resposta gerada por inteligência artificial, segundo a linha doutrinária da Igreja Vidas. Pode favoritar, ouvir, compartilhar, **baixar em Word (.docx)** e ver versículos relacionados.
 
 > Este app é **independente** do "Teologia em Minutos". Os dois funcionam ao mesmo tempo, em endereços e projetos separados.
 
