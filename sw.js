@@ -1,8 +1,8 @@
-// sw.js — service worker mínimo do Teólogo de Bolso PRO
-// Mantém o app instalável na tela inicial. Não guarda respostas em cache
-// (elas sempre vêm atualizadas do servidor), apenas os arquivos básicos.
+// sw.js — service worker do Teólogo de Bolso PRO (versão 2)
+// Estratégia "rede primeiro": com internet, sempre busca a versão mais nova.
+// A cópia guardada só é usada quando o aparelho está sem conexão.
 
-const CACHE = "tbp-v1";
+const CACHE = "tbp-v2";
 const BASICOS = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -19,10 +19,15 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
-  // Chamadas ao servidor (/api/...) nunca passam pelo cache.
-  if (url.pathname.startsWith("/api/")) return;
+  if (url.pathname.startsWith("/api/")) return;   // chamadas ao servidor nunca usam cache
   if (e.request.method !== "GET") return;
   e.respondWith(
-    caches.match(e.request).then((hit) => hit || fetch(e.request).catch(() => caches.match("index.html")))
+    fetch(e.request)
+      .then((resp) => {
+        const copy = resp.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+        return resp;
+      })
+      .catch(() => caches.match(e.request).then((hit) => hit || caches.match("index.html")))
   );
 });
