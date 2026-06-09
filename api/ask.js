@@ -111,8 +111,9 @@ const NIVEIS = {
     "NÍVEL 4 — DOSSIÊ COMPLETO: tratamento abrangente e detalhado, integrando contexto, exegese, doutrina, comparação de interpretações, conexões canônicas e aplicação. Resposta longa e minuciosa.",
 };
 
-// Limite de tamanho da resposta conforme o nível (respostas maiores custam mais).
-const MAX_TOKENS_POR_NIVEL = { "1": 1500, "2": 3000, "3": 5000, "4": 8000 };
+// Limite de tamanho de cada parte da resposta conforme o nível.
+// Se a resposta for cortada no limite, o servidor pede a continuação automaticamente.
+const MAX_TOKENS_POR_NIVEL = { "1": 2000, "2": 4000, "3": 6000, "4": 8000 };
 
 // =====================================================================
 // 4) REGRA DE SAÍDA — formato fixo da resposta (reaproveitada do app atual)
@@ -165,30 +166,42 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens,
-        system,
-        messages: [{ role: "user", content: userContent }],
-      }),
-    });
-    const data = await r.json();
-    if (data && data.error) {
-      res.status(502).json({ error: data.error.message || "Erro na API da Anthropic." });
-      return;
+    let messages = [{ role: "user", content: userContent }];
+    let fullText = "";
+    const MAX_CONTINUACOES = (mode === "verses") ? 0 : 3;
+
+    for (let i = 0; i <= MAX_CONTINUACOES; i++) {
+      const r = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": process.env.ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({ model: MODEL, max_tokens, system, messages }),
+      });
+      const data = await r.json();
+      if (data && data.error) {
+        res.status(502).json({ error: data.error.message || "Erro na API da Anthropic." });
+        return;
+      }
+      const piece = (data.content || [])
+        .filter((b) => b.type === "text")
+        .map((b) => b.text)
+        .join("");
+      fullText += piece;
+
+      // Se a resposta foi cortada no limite de tamanho, pedir a continuação.
+      if (data.stop_reason === "max_tokens" && i < MAX_CONTINUACOES) {
+        messages = messages.concat([
+          { role: "assistant", content: piece },
+          { role: "user", content: "Continue exatamente de onde parou, sem repetir nada do que já foi escrito e sem reescrever a referência inicial." },
+        ]);
+        continue;
+      }
+      break;
     }
-    const text = (data.content || [])
-      .filter((b) => b.type === "text")
-      .map((b) => b.text)
-      .join("\n");
-    res.status(200).json({ text });
+    res.status(200).json({ text: fullText });
   } catch (e) {
     res.status(500).json({ error: "Falha ao contatar a API: " + String(e) });
   }
