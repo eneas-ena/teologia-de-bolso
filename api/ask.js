@@ -78,6 +78,22 @@ const TAREFAS = {
     "TAREFA: ESTUDO PARA CÉLULA / PEQUENO GRUPO. Produza um roteiro participativo e aplicável (não é aula acadêmica nem sermão completo) com: Quebra-gelo/Introdução; Texto base; de 2 a 3 Pontos simples e claros; Perguntas para discussão em grupo; Desafio prático para a semana; e Oração final sugerida. Linguagem acessível e prática. Use títulos com ##.",
   aula:
     "TAREFA: AULA / PALESTRA. Produza um plano de ensino com: Objetivos de aprendizagem; Introdução; Conteúdo organizado em tópicos (com base bíblica e teológica); Atividades ou dinâmicas; Perguntas de fixação; e Conclusão com síntese. Indique sugestão de duração por bloco quando fizer sentido. Use títulos com ##.",
+
+  // ----- Enfoques avançados (módulos 8 a 14 do Manual Mestre) -----
+  hist_profetico:
+    "TAREFA: ENFOQUE HISTÓRICO-PROFÉTICO. Analise os elementos históricos e proféticos do texto — profecia, promessa, juízo, restauração — e como se relacionam com seu cumprimento ou desenvolvimento posterior. Pergunta-guia: que elementos históricos e proféticos estão presentes neste texto e como se relacionam com seu cumprimento? Classifique evidências e distinga cumprimento já realizado, parcial e futuro. Use títulos com ##.",
+  literario:
+    "TAREFA: ENFOQUE LITERÁRIO. Analise a forma do texto: gênero literário, estrutura, e recursos literários (paralelismo, quiasmo, inclusio, repetições, figuras) e como moldam a mensagem. Pergunta-guia: que gênero, estrutura e recursos literários moldam a mensagem deste texto? Use títulos com ##.",
+  judaica:
+    "TAREFA: ENFOQUE VISÃO JUDAICA. Apresente, quando aplicável, como o texto, tema ou conceito foi compreendido em tradições judaicas antigas e posteriores (Mishná, Talmud, Midrash, Targuns, literatura do Segundo Templo) e compare com a interpretação cristã. Pergunta-guia: como a tradição judaica interpreta ou dialoga com este texto? Deixe claro o que é fonte rabínica, o que é hipótese e o que é leitura cristã; a tradição judaica ilumina o contexto mas não determina a interpretação cristã. Use títulos com ##.",
+  escatologico:
+    "TAREFA: ENFOQUE ESCATOLÓGICO. Analise a relação do texto com as últimas coisas: consumação do Reino, juízo, ressurreição, nova criação e a volta de Cristo. Pergunta-guia: este texto se relaciona com a consumação do plano de Deus? Mantenha a perspectiva prioritariamente amilenista, mencione outras posições só quando relevante e evite especulações, datas e conspirações. Use títulos com ##.",
+  cronologia:
+    "TAREFA: ENFOQUE CRONOLOGIA. Localize o texto, evento ou livro na linha do tempo bíblica e histórica. Pergunta-guia: quando o texto foi escrito, quando o acontecimento ocorreu e quais eventos se relacionam ao período? Use datas aproximadas, indicando claramente quando há consenso ou debate, e evite falsa precisão. Use títulos com ##.",
+  arqueologia:
+    "TAREFA: ENFOQUE EVIDÊNCIAS ARQUEOLÓGICAS. Examine descobertas materiais que iluminam o contexto: achados, inscrições, manuscritos, costumes e lugares relacionados ao texto. Pergunta-guia: existem evidências arqueológicas relacionadas a este texto, povo, lugar ou período? Classifique cada item como evidência forte, moderada, indireta ou inexistente, e distinga fato de hipótese. Use títulos com ##.",
+  aplicacao:
+    "TAREFA: ENFOQUE APLICAÇÃO ATUAL. Traduza a compreensão do texto para a vida contemporânea de forma fiel, prática e transformadora. Pergunta-guia: como este texto deve moldar a fé, o caráter, as decisões e a missão do povo de Deus hoje? Toda aplicação deve nascer do significado do texto, sem moralismo nem alegorização forçada. Use títulos com ##.",
 };
 
 // =====================================================================
