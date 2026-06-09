@@ -61,6 +61,18 @@
   .task .circ svg{stroke:var(--gold-soft);}
   .task h3{font-family:var(--accent);font-size:1.18rem;margin:0 0 2px;font-weight:600;color:var(--text);}
   .task p{margin:0;font-size:.82rem;color:var(--text-soft);}
+  .task.wide{grid-column:1/-1;display:flex;align-items:center;gap:14px;}
+  .task.wide .circ{margin-bottom:0;flex:none;}
+  .task.wide .tw-txt h3{margin:0;}
+  .enfoques{display:flex;flex-direction:column;gap:10px;}
+  .enfoque{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;
+    box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;gap:14px;transition:transform .12s;}
+  .enfoque:active{transform:scale(.985);}
+  .enfoque .circ{width:42px;height:42px;border-radius:50%;background:var(--purple);display:grid;place-items:center;flex:none;}
+  .enfoque .circ svg{stroke:var(--gold-soft);}
+  .enfoque h3{font-family:var(--accent);font-size:1.12rem;margin:0;font-weight:600;color:var(--text);}
+  .enfoque p{margin:0;font-size:.8rem;color:var(--text-soft);}
+  .grp-label{font-size:.74rem;color:var(--text-soft);text-transform:uppercase;letter-spacing:.1em;margin:6px 2px 4px;}
 
   .panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;
     box-shadow:var(--shadow);padding:16px;margin-top:16px;}
@@ -187,6 +199,10 @@
         <span class="circ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M7 9.5V14c0 1.7 2.2 3 5 3s5-1.3 5-3V9.5M21 7v5"/></svg></span>
         <h3>Aula / palestra</h3><p>Objetivos e atividades</p>
       </button>
+      <button class="task wide" id="card-esp">
+        <span class="circ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5M3 16l9 5 9-5"/></svg></span>
+        <div class="tw-txt"><h3 id="esp-titulo">Estudo especializado</h3><p id="esp-sub">7 enfoques de aprofundamento</p></div>
+      </button>
     </div>
 
     <div class="panel">
@@ -231,6 +247,14 @@
     </div>
   </section>
 
+  <!-- ===== ENFOQUES ESPECIALIZADOS ===== -->
+  <section id="tela-enfoques" class="screen">
+    <button class="back" id="enf-voltar">&#8592; Voltar</button>
+    <div class="section-label">Estudo especializado</div>
+    <div class="grp-label">Análise avançada</div>
+    <div class="enfoques" id="lista-enfoques"></div>
+  </section>
+
   <!-- ===== EXPLORAR ===== -->
   <section id="tela-explorar" class="screen">
     <div class="section-label">Perguntas para explorar</div>
@@ -268,6 +292,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
 <script>
 const API = "/api/ask";
 const LEVEL_DESC = {
@@ -306,10 +331,38 @@ $$("nav button").forEach(b=> b.onclick = () => {
 function irInicio(){ $$("nav button").forEach(x=>x.classList.remove("sel"));
   $('nav button[data-go="inicio"]').classList.add("sel"); mostrar("inicio"); }
 
+/* ---- enfoques especializados (módulos avançados) ---- */
+const ENFOQUES = [
+  {k:"hist_profetico", n:"Histórico-profético",   d:"Profecia, promessa e cumprimento"},
+  {k:"literario",      n:"Contexto literário",     d:"Gênero, estrutura e recursos"},
+  {k:"judaica",        n:"Visão judaica",          d:"Tradição rabínica e comparação"},
+  {k:"escatologico",   n:"Contexto escatológico",  d:"Reino, juízo e volta de Cristo"},
+  {k:"cronologia",     n:"Cronologia",             d:"Linha do tempo bíblica"},
+  {k:"arqueologia",    n:"Arqueologia",            d:"Achados e evidências materiais"},
+  {k:"aplicacao",      n:"Aplicação atual",        d:"A vida à luz do texto"},
+];
+const ICON_ENF='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/></svg>';
+function resetEsp(){ $("#card-esp").classList.remove("sel");
+  $("#esp-titulo").textContent="Estudo especializado"; $("#esp-sub").textContent="7 enfoques de aprofundamento"; }
+
 /* ---- seleção de tarefa e nível ---- */
-$$("#tasks .task").forEach(t=> t.onclick = () => {
+$$('#tasks .task[data-task]').forEach(t=> t.onclick = () => {
   $$("#tasks .task").forEach(x=>x.classList.remove("sel")); t.classList.add("sel");
-  estado.tarefa = t.dataset.task; });
+  estado.tarefa = t.dataset.task; resetEsp(); });
+
+$("#card-esp").onclick = () => {
+  $("#lista-enfoques").innerHTML = ENFOQUES.map(e=>(
+    '<div class="enfoque" data-k="'+e.k+'"><span class="circ">'+ICON_ENF+'</span>'+
+    '<div><h3>'+esc(e.n)+'</h3><p>'+esc(e.d)+'</p></div></div>')).join("");
+  $$("#lista-enfoques .enfoque").forEach(el=> el.onclick=()=>{
+    const e=ENFOQUES.find(x=>x.k===el.dataset.k);
+    estado.tarefa=e.k; $$("#tasks .task").forEach(x=>x.classList.remove("sel"));
+    $("#card-esp").classList.add("sel"); $("#esp-titulo").textContent=e.n; $("#esp-sub").textContent="Enfoque avançado ativo";
+    irInicio(); });
+  $$("nav button").forEach(x=>x.classList.remove("sel")); mostrar("enfoques");
+};
+$("#enf-voltar").onclick = irInicio;
+
 $$("#levels button").forEach(b=> b.onclick = () => {
   $$("#levels button").forEach(x=>x.classList.remove("sel")); b.classList.add("sel");
   estado.nivel = b.dataset.n; $("#level-desc").textContent = LEVEL_DESC[b.dataset.n]; });
@@ -399,14 +452,34 @@ $("#act-share").onclick = async () => {
   else { try{ await navigator.clipboard.writeText(txt); toast("Copiado!"); }catch(e){ toast("Não foi possível compartilhar."); } }
 };
 
-/* ---- baixar ---- */
-$("#act-baixar").onclick = () => {
-  const txt = (estado.atual.referencia? estado.atual.referencia+"\n\n":"") + estado.atual.texto +
-    "\n\n— Teólogo de Bolso PRO";
-  const nome = (estado.atual.tarefa+"-"+(estado.atual.referencia||"estudo")).replace(/[^\wÀ-ÿ-]+/g,"_")+".txt";
-  const blob = new Blob([txt],{type:"text/plain;charset=utf-8"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=nome;
-  document.body.appendChild(a); a.click(); a.remove();
+/* ---- baixar (Word .docx, com retorno a texto se necessário) ---- */
+function nomeArq(it,ext){ return (it.tarefa+"-"+(it.referencia||"estudo")).replace(/[^\wÀ-ÿ-]+/g,"_")+"."+ext; }
+function baixarBlob(blob,nome){ const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download=nome; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); }
+function runsMd(t,d){ const out=[]; const re=/\*\*(.+?)\*\*/g; let last=0,m;
+  while((m=re.exec(t))){ if(m.index>last) out.push(new d.TextRun(t.slice(last,m.index)));
+    out.push(new d.TextRun({text:m[1],bold:true})); last=re.lastIndex; }
+  if(last<t.length) out.push(new d.TextRun(t.slice(last)));
+  return out.length?out:[new d.TextRun(t)]; }
+async function gerarDocx(it){
+  const d=window.docx; const ROXO="3E2A4F"; const P=[];
+  P.push(new d.Paragraph({children:[new d.TextRun({text:"Teólogo de Bolso PRO",bold:true,color:"8B7A9B",size:18})]}));
+  if(it.referencia) P.push(new d.Paragraph({children:[new d.TextRun({text:it.referencia,bold:true,color:"C6A75E",size:30})],spacing:{after:200}}));
+  it.texto.split(/\r?\n/).forEach(ln=>{ const l=ln.trim(); if(!l) return;
+    if(l.startsWith("### ")) P.push(new d.Paragraph({children:[new d.TextRun({text:l.slice(4),bold:true,color:ROXO,size:24})],spacing:{before:160,after:60}}));
+    else if(l.startsWith("## ")) P.push(new d.Paragraph({children:[new d.TextRun({text:l.slice(3),bold:true,color:ROXO,size:28})],spacing:{before:200,after:80}}));
+    else if(l.startsWith("# ")) P.push(new d.Paragraph({children:[new d.TextRun({text:l.slice(2),bold:true,color:ROXO,size:28})],spacing:{before:200,after:80}}));
+    else if(/^[-*]\s+/.test(l)) P.push(new d.Paragraph({children:runsMd(l.replace(/^[-*]\s+/,""),d),bullet:{level:0},spacing:{after:40}}));
+    else P.push(new d.Paragraph({children:runsMd(l,d),spacing:{after:120}})); });
+  P.push(new d.Paragraph({children:[new d.TextRun({text:"O objetivo final da teologia não é apenas informar a mente, mas transformar a vida à luz da Palavra de Deus.",italics:true,color:"8B7A9B",size:18})],spacing:{before:280}}));
+  const doc=new d.Document({sections:[{children:P}]});
+  return d.Packer.toBlob(doc);
+}
+$("#act-baixar").onclick = async () => {
+  const it=estado.atual;
+  if(window.docx){ try{ const blob=await gerarDocx(it); baixarBlob(blob,nomeArq(it,"docx")); toast("Baixado em Word."); return; }catch(e){} }
+  const txt=(it.referencia? it.referencia+"\n\n":"")+it.texto+"\n\n— Teólogo de Bolso PRO";
+  baixarBlob(new Blob([txt],{type:"text/plain;charset=utf-8"}),nomeArq(it,"txt"));
 };
 
 /* ---- versículos relacionados ---- */
@@ -437,6 +510,7 @@ $("#act-fav").onclick = () => {
 };
 function salvarHistorico(it){ let h=ler("tbp_hist"); h.unshift(it); if(h.length>60) h=h.slice(0,60); grav("tbp_hist",h); }
 const NOME_TAREFA={analisar:"Análise",sermao:"Sermão",celula:"Célula",aula:"Aula"};
+ENFOQUES.forEach(e=>NOME_TAREFA[e.k]=e.n);
 function renderLista(tipo){
   const dados = tipo==="fav" ? ler("tbp_fav") : ler("tbp_hist");
   const alvo = tipo==="fav" ? $("#fav-list") : $("#hist-list");
