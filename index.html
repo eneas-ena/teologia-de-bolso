@@ -664,7 +664,7 @@ async function syncSet(lista){ const c=syncCod(); if(!c) return;
 async function syncAgora(silencioso){ const c=syncCod(); if(!c) return false;
   try{ const serv=await syncGet(); const merged=uniao(ler("tbp_fav"), serv);
     grav("tbp_fav", merged); await syncSet(merged); return true; }
-  catch(e){ if(!silencioso) toast("Não foi possível sincronizar agora."); return false; } }
+  catch(e){ if(!silencioso) toast("Detalhe do erro: " + (e && e.message ? e.message : "falha de conexão"), 8000); return false; } }
 function renderSyncStatus(){ const c=syncCod();
   if(c){ $("#sync-status").textContent="Sincronização ativa. Código: "+c; $("#sync-status").classList.add("on");
     $("#sync-off").style.display="none"; $("#sync-on").style.display="block"; }
@@ -692,8 +692,8 @@ $$("#suggest .chip").forEach(c=> c.onclick=()=>{ $("#pergunta").value=c.textCont
 
 /* ---- toast ---- */
 let toastTimer;
-function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on");
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("on"),2200); }
+function toast(msg,ms){ const t=$("#toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("on"), ms||2200); }
 
 /* ---- service worker (PWA) ---- */
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{
