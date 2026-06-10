@@ -7,6 +7,9 @@
 <meta name="theme-color" content="#3E2A4F" />
 <link rel="manifest" href="manifest.json" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="icon-192.png" />
+<link rel="shortcut icon" href="icon-192.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet" />
@@ -106,7 +109,7 @@
 
   /* Resposta */
   .ref{font-family:var(--display);color:var(--gold);font-weight:600;font-size:1.05rem;letter-spacing:.02em;}
-  .answer{font-size:1.02rem;}
+  .answer{font-size:var(--answer-size,1.02rem);}
   .answer h2{font-family:var(--accent);color:var(--purple);font-size:1.4rem;margin:18px 0 6px;}
   .answer h3{font-family:var(--accent);color:var(--purple);font-size:1.18rem;margin:14px 0 4px;}
   [data-theme="dark"] .answer h2,[data-theme="dark"] .answer h3{color:var(--gold-soft);}
@@ -140,6 +143,18 @@
 
   .about p{color:var(--text-soft);font-size:.92rem;}
   .danger{background:none;border:1px solid #a8324a;color:#a8324a;border-radius:20px;padding:10px 16px;cursor:pointer;}
+  .fonte-ctrl{display:flex;align-items:center;gap:8px;float:right;margin-top:2px;font-size:.82rem;color:var(--text-soft);}
+  .fonte-ctrl button{width:34px;height:30px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--purple);cursor:pointer;font-weight:600;}
+  [data-theme="dark"] .fonte-ctrl button{color:var(--gold-soft);}
+  .busca{width:100%;border:1px solid var(--border);border-radius:14px;padding:11px 14px;font-family:var(--body);
+    font-size:.95rem;background:var(--surface-2);color:var(--text);outline:none;margin-bottom:12px;}
+  .busca:focus{border-color:var(--gold);}
+  .sync-status{margin:0 0 10px;font-size:.9rem;color:var(--text-soft);}
+  .sync-status.on{color:var(--purple);font-weight:600;}
+  [data-theme="dark"] .sync-status.on{color:var(--gold-soft);}
+  .sync-btns{display:flex;gap:8px;}
+  .sync-btns .act{flex:1;justify-content:center;}
+  .sync-hint{font-size:.78rem;color:var(--text-soft);margin:10px 2px 0;}
 
   .loader{display:none;text-align:center;padding:24px;color:var(--text-soft);font-family:var(--accent);font-size:1.15rem;}
   .loader.on{display:block;}
@@ -237,6 +252,11 @@
   <!-- ===== RESPOSTA ===== -->
   <section id="tela-resposta" class="screen">
     <button class="back" id="btn-voltar">&#8592; Voltar</button>
+    <div class="fonte-ctrl" id="fonte-ctrl" style="display:none">
+      <span>Letra</span>
+      <button id="fonte-menos" aria-label="Diminuir letra">A&minus;</button>
+      <button id="fonte-mais" aria-label="Aumentar letra">A+</button>
+    </div>
     <div class="loader" id="loader"><div class="spin"></div>Preparando o estudo…</div>
     <div class="panel" id="resp-panel" style="display:none">
       <div class="ref" id="resp-ref"></div>
@@ -245,6 +265,7 @@
         <button class="act" id="act-fav"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg>Favoritar</button>
         <button class="act" id="act-ouvir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9v6h4l5 4V5L8 9H4zM17 8a5 5 0 0 1 0 8"/></svg>Ouvir</button>
         <button class="act" id="act-share"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 11l8-4M8 13l8 4"/></svg>Compartilhar</button>
+        <button class="act" id="act-copiar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copiar</button>
         <button class="act" id="act-baixar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 11l5 4 5-4M5 21h14"/></svg>Baixar</button>
         <button class="act" id="act-versiculos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a3 3 0 0 1 3-3h13v17H7a3 3 0 0 0-3 3z"/></svg>Versículos</button>
       </div>
@@ -269,6 +290,7 @@
   <!-- ===== FAVORITOS ===== -->
   <section id="tela-favoritos" class="screen">
     <div class="section-label">Seus favoritos</div>
+    <input class="busca" id="busca-fav" placeholder="Buscar nos favoritos…" />
     <div id="fav-list"></div>
   </section>
 
@@ -279,7 +301,25 @@
       <p><strong>Teólogo de Bolso PRO</strong> — pesquisa bíblica avançada para estudo, ensino, pregação e formação ministerial, segundo a linha doutrinária da Igreja Vidas.</p>
       <p>As respostas são geradas por inteligência artificial e devem ser conferidas à luz das Escrituras.</p>
     </div>
+
+    <div class="section-label">Sincronizar favoritos</div>
+    <div class="panel">
+      <p class="sync-status" id="sync-status"></p>
+      <div id="sync-off">
+        <input class="busca" id="sync-input" placeholder="Digite ou gere um código" autocapitalize="off" autocorrect="off" />
+        <div class="sync-btns">
+          <button class="act" id="sync-conectar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4M7 7H5a2 2 0 0 0-2 2v8M17 7h2a2 2 0 0 1 2 2v8"/></svg>Conectar</button>
+          <button class="act" id="sync-gerar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3"/></svg>Gerar código</button>
+        </div>
+        <p class="sync-hint">Use o mesmo código nos dois aparelhos (celular e computador) para compartilhar os favoritos.</p>
+      </div>
+      <div id="sync-on" style="display:none">
+        <button class="act" id="sync-sair"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Desconectar este aparelho</button>
+      </div>
+    </div>
+
     <div class="section-label">Histórico</div>
+    <input class="busca" id="busca-hist" placeholder="Buscar no histórico…" />
     <div id="hist-list"></div>
     <div style="text-align:center;margin:14px 0;">
       <button class="danger" id="btn-limpar">Limpar histórico</button>
@@ -330,8 +370,8 @@ function mostrar(id){ $$(".screen").forEach(s=>s.classList.remove("on"));
 $$("nav button").forEach(b=> b.onclick = () => {
   $$("nav button").forEach(x=>x.classList.remove("sel")); b.classList.add("sel");
   const go=b.dataset.go; mostrar(go);
-  if(go==="favoritos") renderLista("fav");
-  if(go==="perfil") renderLista("hist");
+  if(go==="favoritos"){ renderLista("fav"); syncPull().then((ok)=>{ if(ok) renderLista("fav"); }); }
+  if(go==="perfil"){ renderLista("hist"); renderSyncStatus(); }
 });
 function irInicio(){ $$("nav button").forEach(x=>x.classList.remove("sel"));
   $('nav button[data-go="inicio"]').classList.add("sel"); mostrar("inicio"); }
@@ -539,31 +579,82 @@ $("#act-fav").onclick = () => {
   if(ehFavorito(it)){ f=f.filter(x=>!(x.pergunta===it.pergunta && x.tarefa===it.tarefa && x.nivel===it.nivel));
     $("#act-fav").classList.remove("on"); toast("Removido dos favoritos."); }
   else { f.unshift(it); $("#act-fav").classList.add("on"); toast("Adicionado aos favoritos!"); }
-  grav("tbp_fav", f);
+  grav("tbp_fav", f); syncPush();
 };
 function salvarHistorico(it){ let h=ler("tbp_hist"); h.unshift(it); if(h.length>60) h=h.slice(0,60); grav("tbp_hist",h); }
 const NOME_TAREFA={analisar:"Análise",sermao:"Sermão",celula:"Célula",aula:"Aula"};
 ENFOQUES.forEach(e=>NOME_TAREFA[e.k]=e.n);
+function filtra(arr,q){ if(!q) return arr; q=q.toLowerCase();
+  return arr.filter(it=> (it.pergunta||"").toLowerCase().includes(q) || (it.referencia||"").toLowerCase().includes(q) || (it.texto||"").toLowerCase().includes(q)); }
 function renderLista(tipo){
-  const dados = tipo==="fav" ? ler("tbp_fav") : ler("tbp_hist");
+  const q = tipo==="fav" ? (($("#busca-fav")||{}).value||"") : (($("#busca-hist")||{}).value||"");
+  const dados = filtra(tipo==="fav" ? ler("tbp_fav") : ler("tbp_hist"), q);
   const alvo = tipo==="fav" ? $("#fav-list") : $("#hist-list");
-  if(!dados.length){ alvo.innerHTML='<div class="empty">'+(tipo==="fav"?"Nenhum favorito ainda.":"Nada no histórico ainda.")+'</div>'; return; }
-  alvo.innerHTML = dados.map((it,i)=>(
-    '<div class="item" data-tipo="'+tipo+'" data-i="'+i+'">'+
+  if(!dados.length){ alvo.innerHTML='<div class="empty">'+(q?"Nada encontrado.":(tipo==="fav"?"Nenhum favorito ainda.":"Nada no histórico ainda."))+'</div>'; return; }
+  alvo.innerHTML = dados.map((it)=>(
+    '<div class="item">'+
     '<div class="meta">'+(NOME_TAREFA[it.tarefa]||"Estudo")+' &middot; Nível '+it.nivel+'</div>'+
     '<div class="q">'+esc(it.pergunta)+'</div>'+
     (it.referencia?'<div class="ref">'+esc(it.referencia)+'</div>':'')+'</div>'
   )).join("");
-  alvo.querySelectorAll(".item").forEach(el=> el.onclick=()=>{
-    const arr = el.dataset.tipo==="fav"? ler("tbp_fav"):ler("tbp_hist");
-    abrirItem(arr[+el.dataset.i]); });
+  alvo.querySelectorAll(".item").forEach((el,i)=> el.onclick=()=> abrirItem(dados[i]));
 }
+if($("#busca-fav")) $("#busca-fav").addEventListener("input", ()=>renderLista("fav"));
+if($("#busca-hist")) $("#busca-hist").addEventListener("input", ()=>renderLista("hist"));
 function abrirItem(it){ estado.atual=it; mostrar("resposta");
   $$("nav button").forEach(x=>x.classList.remove("sel"));
   $("#loader").classList.remove("on"); $("#resp-panel").style.display="block"; $("#verses-box").innerHTML="";
   $("#resp-ref").textContent=it.referencia||""; $("#resp-body").innerHTML=mdToHtml(it.texto);
   $("#act-fav").classList.toggle("on", ehFavorito(it)); window.scrollTo(0,0); }
 $("#btn-limpar").onclick = () => { grav("tbp_hist",[]); renderLista("hist"); toast("Histórico limpo."); };
+
+/* ---- copiar ---- */
+$("#act-copiar").onclick = async () => {
+  const it=estado.atual; const txt=(it.referencia? it.referencia+"\n\n":"")+it.texto;
+  try{ await navigator.clipboard.writeText(txt); toast("Texto copiado!"); }
+  catch(e){ const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); toast("Texto copiado!"); }catch(_){ toast("Não foi possível copiar."); } ta.remove(); }
+};
+
+/* ---- tamanho da letra ---- */
+function aplicaFonte(px){ document.documentElement.style.setProperty("--answer-size", px+"px"); }
+(function(){ let px=17; try{ px=parseInt(localStorage.getItem("tbp_fonte"))||17; }catch(e){}
+  estado.fonte=px; aplicaFonte(px); if($("#fonte-ctrl")) $("#fonte-ctrl").style.display="flex"; })();
+function mudaFonte(d){ estado.fonte=Math.min(26, Math.max(14,(estado.fonte||17)+d)); aplicaFonte(estado.fonte);
+  try{ localStorage.setItem("tbp_fonte", estado.fonte); }catch(e){} }
+$("#fonte-menos").onclick=()=>mudaFonte(-1);
+$("#fonte-mais").onclick=()=>mudaFonte(1);
+
+/* ---- sincronização de favoritos (sem login, por código) ---- */
+const SYNC_API="/api/sync";
+function syncCod(){ try{ return localStorage.getItem("tbp_sync")||""; }catch(e){ return ""; } }
+function setSyncCod(c){ try{ if(c) localStorage.setItem("tbp_sync",c); else localStorage.removeItem("tbp_sync"); }catch(e){} }
+function favKey(x){ return (x.pergunta||"")+"|"+(x.tarefa||"")+"|"+(x.nivel||""); }
+function mesclaFav(a,b){ const map={}, ordem=[];
+  a.concat(b).forEach(x=>{ const k=favKey(x); if(!(k in map)){ map[k]=x; ordem.push(k); } });
+  return ordem.map(k=>map[k]); }
+async function syncPush(){ const c=syncCod(); if(!c) return;
+  try{ await fetch(SYNC_API,{method:"POST",headers:{"content-type":"application/json"},
+    body:JSON.stringify({acao:"set",codigo:c,dados:ler("tbp_fav")})}); }catch(e){} }
+async function syncPull(){ const c=syncCod(); if(!c) return false;
+  try{ const r=await fetch(SYNC_API,{method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({acao:"get",codigo:c})});
+    const data=await r.json();
+    if(data && Array.isArray(data.dados)){ grav("tbp_fav", mesclaFav(ler("tbp_fav"), data.dados)); return true; }
+  }catch(e){} return false; }
+function renderSyncStatus(){ const c=syncCod();
+  if(c){ $("#sync-status").textContent="Sincronização ativa. Código: "+c; $("#sync-status").classList.add("on");
+    $("#sync-off").style.display="none"; $("#sync-on").style.display="block"; }
+  else { $("#sync-status").textContent="Não sincronizado — os favoritos ficam só neste aparelho.";
+    $("#sync-status").classList.remove("on"); $("#sync-off").style.display="block"; $("#sync-on").style.display="none"; } }
+if($("#sync-gerar")) $("#sync-gerar").onclick=()=>{ $("#sync-input").value="vidas-"+Math.random().toString(36).slice(2,6).toUpperCase(); };
+if($("#sync-conectar")) $("#sync-conectar").onclick=async()=>{
+  const c=(($("#sync-input").value||"").trim().toLowerCase().replace(/\s+/g,""));
+  if(c.length<4){ toast("Código muito curto (mín. 4 letras/números)."); return; }
+  setSyncCod(c); renderSyncStatus(); toast("Conectando…");
+  await syncPull(); await syncPush(); renderLista("fav"); toast("Sincronização ativada!"); };
+if($("#sync-sair")) $("#sync-sair").onclick=()=>{ setSyncCod(""); renderSyncStatus(); toast("Sincronização desligada neste aparelho."); };
+renderSyncStatus();
 
 /* ---- explorar ---- */
 $("#suggest").innerHTML = SUGESTOES.map(s=>'<span class="chip">'+esc(s)+'</span>').join("");

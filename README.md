@@ -2,7 +2,7 @@
 
 Pesquisa bíblica avançada ao alcance da sua mão — app da **Igreja Vidas**.
 
-O usuário escolhe uma **tarefa** (Analisar texto, Sermão, Estudo de célula, Aula ou um dos 7 **enfoques avançados** em "Estudo especializado") e um **nível de profundidade (1 a 4)**, digita ou dita um texto/tema, e recebe a resposta gerada por inteligência artificial, segundo a linha doutrinária da Igreja Vidas. Pode favoritar, ouvir, compartilhar, **baixar em Word (.docx)** e ver versículos relacionados.
+O usuário escolhe uma **tarefa** (Analisar texto, Sermão, Estudo de célula, Aula ou um dos 7 **enfoques avançados** em "Estudo especializado") e um **nível de profundidade (1 a 4)**, digita ou dita um texto/tema, e recebe a resposta gerada por inteligência artificial, segundo a linha doutrinária da Igreja Vidas. Pode favoritar, ouvir, compartilhar, copiar, **baixar em Word (.docx)**, ver versículos relacionados, ajustar o tamanho da letra, buscar nos favoritos e no histórico, e **sincronizar os favoritos** entre aparelhos por meio de um código pessoal.
 
 > Este app é **independente** do "Teologia em Minutos". Os dois funcionam ao mesmo tempo, em endereços e projetos separados.
 
@@ -14,13 +14,15 @@ O usuário escolhe uma **tarefa** (Analisar texto, Sermão, Estudo de célula, A
 teologia-de-bolso/
 ├── index.html          → a aparência (telas, cards, botões)
 ├── api/
-│   └── ask.js          → o "cérebro": guarda a chave e fala com o Claude
+│   ├── ask.js          → o "cérebro": guarda a chave e fala com o Claude
+│   └── sync.js         → sincronização de favoritos (guarda a credencial do Supabase)
 ├── manifest.json       → configuração do ícone na tela do celular
 ├── sw.js               → deixa o app "instalável" (PWA)
 ├── icon-192.png        → ícone
 ├── icon-512.png        → ícone (alta resolução)
 ├── apple-touch-icon.png→ ícone (iPhone)
 ├── package.json        → arquivo técnico (não precisa mexer)
+├── supabase_favoritos.sql → SQL para criar a tabela de favoritos no Supabase
 └── README.md           → este guia
 ```
 
@@ -60,6 +62,24 @@ Não se repete a montagem. Para qualquer mudança:
 4. A Vercel republica sozinha.
 
 > Antes de mexer no `api/ask.js`, guarde uma cópia do conteúdo original como backup.
+
+---
+
+## Sincronizar favoritos (Supabase)
+
+Os favoritos podem ser compartilhados entre aparelhos por meio de um código pessoal,
+sem necessidade de login. Configuração feita uma única vez:
+
+1. No **Supabase**, criar (ou abrir) um projeto. Em **SQL Editor → New query**, colar e
+   executar o conteúdo de `supabase_favoritos.sql` (cria a tabela `tbp_favoritos`).
+2. Em **Project Settings → API**, copiar a **Project URL** e a chave **service_role** (secreta).
+3. Na **Vercel**, em **Settings → Environment Variables**, adicionar:
+   - `SUPABASE_URL` = a Project URL
+   - `SUPABASE_KEY` = a chave service_role
+4. **Redeploy** do projeto.
+
+No app, em **Perfil → Sincronizar favoritos**, gerar um código e usar o mesmo código
+em cada aparelho. A credencial do banco fica só no servidor; o navegador nunca a vê.
 
 ---
 
