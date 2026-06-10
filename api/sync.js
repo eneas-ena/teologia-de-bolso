@@ -7,12 +7,31 @@
 //   SUPABASE_KEY  -> a chave "service_role" do Supabase (secreta)
 
 module.exports = async (req, res) => {
+  const URL = process.env.SUPABASE_URL;
+  const KEY = process.env.SUPABASE_KEY;
+
+  // DIAGNÓSTICO: abrir /api/sync no navegador (GET) mostra o que o servidor enxerga.
+  // Não revela a chave secreta — só se ela existe e o que o Supabase responde.
+  if (req.method === "GET") {
+    const out = { temURL: !!URL, temKEY: !!KEY };
+    if (URL) out.base = URL.replace(/\/$/, "") + "/rest/v1/tbp_favoritos";
+    if (URL && KEY) {
+      try {
+        const r = await fetch(out.base + "?select=codigo&limit=1", {
+          headers: { "apikey": KEY, "Authorization": "Bearer " + KEY },
+        });
+        out.testeStatus = r.status;
+        out.testeCorpo = (await r.text()).slice(0, 400);
+      } catch (e) { out.testeErro = String(e); }
+    }
+    res.status(200).json(out);
+    return;
+  }
+
   if (req.method !== "POST") {
     res.status(405).json({ error: "Método não permitido." });
     return;
   }
-  const URL = process.env.SUPABASE_URL;
-  const KEY = process.env.SUPABASE_KEY;
   if (!URL || !KEY) {
     res.status(500).json({ error: "Sincronização não configurada no servidor." });
     return;
