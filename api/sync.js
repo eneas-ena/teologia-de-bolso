@@ -46,7 +46,7 @@ module.exports = async (req, res) => {
     }
     if (acao === "set") {
       const dados = (body && Array.isArray(body.dados)) ? body.dados : [];
-      const r = await fetch(base + "?on_conflict=codigo", {
+      const r = await fetch(base, {
         method: "POST",
         headers: Object.assign({}, headers, { "Prefer": "resolution=merge-duplicates,return=minimal" }),
         body: JSON.stringify({ codigo, dados, atualizado_em: new Date().toISOString() }),
