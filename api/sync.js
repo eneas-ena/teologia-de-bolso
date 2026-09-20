@@ -65,12 +65,11 @@ module.exports = async (req, res) => {
     }
     if (acao === "set") {
       const dados = (body && Array.isArray(body.dados)) ? body.dados : [];
-      // Apaga o registro atual deste código (se existir) e insere o novo.
-      // Evita depender de "upsert", que a configuração do banco pode não aceitar.
-      await fetch(base + "?codigo=eq." + encodeURIComponent(codigo), { method: "DELETE", headers });
+      // Upsert pela chave primária "codigo": atualiza o registro se já existir,
+      // ou cria se não existir. Não duplica e não depende de apagar antes.
       const r = await fetch(base, {
         method: "POST",
-        headers: Object.assign({}, headers, { "Prefer": "return=minimal" }),
+        headers: Object.assign({}, headers, { "Prefer": "resolution=merge-duplicates,return=minimal" }),
         body: JSON.stringify({ codigo, dados, atualizado_em: new Date().toISOString() }),
       });
       if (!r.ok) {
