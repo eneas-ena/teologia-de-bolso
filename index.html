@@ -38,6 +38,7 @@
   .brand-ic{width:52px;height:52px;border-radius:50%;flex:none;}
   .saud h2{font-family:var(--accent);font-size:1.45rem;margin:0;font-weight:600;}
   .saud p{margin:0;color:var(--text-soft);font-size:.86rem;}
+  .app-ver{font-size:.72rem;color:var(--text-soft);opacity:.75;align-self:center;margin-right:4px;letter-spacing:.02em;}
   .htools{display:flex;gap:8px;}
   .htools button{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--border);
     background:var(--surface);color:var(--purple);display:grid;place-items:center;cursor:pointer;}
@@ -187,6 +188,7 @@
       </div>
     </div>
     <div class="htools">
+      <span class="app-ver" id="app-ver"></span>
       <button id="btn-tema" title="Modo claro/escuro" aria-label="Alternar tema">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
       </button>
@@ -343,6 +345,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
 <script>
+const APP_VER = "v1.4";
 const API = "/api/ask";
 const LEVEL_DESC = {
   "1":"Resumo devocional — breve e edificante.",
@@ -359,6 +362,7 @@ let estado = { tarefa:"analisar", nivel:"2", atual:null, falando:false };
 
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
+if ($("#app-ver")) $("#app-ver").textContent = APP_VER;
 
 /* ---- tema ---- */
 function aplicarTema(t){ document.documentElement.setAttribute("data-theme", t);
