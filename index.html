@@ -39,7 +39,10 @@
   .saud h2{font-family:var(--accent);font-size:1.45rem;margin:0;font-weight:600;}
   .saud p{margin:0;color:var(--text-soft);font-size:.86rem;}
   .app-ver{font-size:.72rem;color:var(--text-soft);opacity:.75;align-self:center;margin-right:4px;letter-spacing:.02em;}
-  .htools{display:flex;gap:8px;}
+  .htools{display:flex;gap:6px;flex-shrink:0;align-items:center;}
+  .htools button.mini{width:auto;height:30px;padding:0 8px;border-radius:15px;font-size:12px;font-weight:600;}
+  .app-ver{display:block;text-align:right;}
+  @media (max-width:420px){ .htools button{width:36px;height:36px;} .htools button.mini{height:28px;padding:0 7px;} .app-ver{display:none;} .ver-mobile{display:block!important;} }
   .htools button{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--border);
     background:var(--surface);color:var(--purple);display:grid;place-items:center;cursor:pointer;}
   [data-theme="dark"] .htools button{color:var(--gold-soft);}
@@ -175,6 +178,7 @@
     padding:10px 18px;border-radius:24px;font-size:.88rem;opacity:0;pointer-events:none;transition:opacity .25s;z-index:30;}
   .toast.on{opacity:1;}
 </style>
+<script src="porteiro.js" data-app="Teólogo de Bolso PRO" data-versao="1.5"></script>
 </head>
 <body>
 <div class="wrap">
@@ -189,6 +193,8 @@
     </div>
     <div class="htools">
       <span class="app-ver" id="app-ver"></span>
+      <button class="mini" onclick="porteiroAtualizar()" title="Atualizar app" aria-label="Atualizar app" style="font-size:15px">⟳</button>
+      <button class="mini" onclick="porteiroSair()" title="Sair" aria-label="Sair">Sair</button>
       <button id="btn-tema" title="Modo claro/escuro" aria-label="Alternar tema">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
       </button>
@@ -201,6 +207,7 @@
       <h1>Teólogo de Bolso<br>PRO</h1>
       <div class="divider">&#10047;</div>
       <p class="slogan">Pesquisa bíblica avançada ao alcance da sua mão</p>
+      <p class="ver-mobile" style="display:none;text-align:center;font-size:.72rem;opacity:.6;margin-top:4px"></p>
     </div>
 
     <div class="section-label">O que você quer fazer?</div>
@@ -345,7 +352,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
 <script>
-const APP_VER = "v1.4";
+const APP_VER = "v1.5";
 const API = "/api/ask";
 const LEVEL_DESC = {
   "1":"Resumo devocional — breve e edificante.",
@@ -363,6 +370,7 @@ let estado = { tarefa:"analisar", nivel:"2", atual:null, falando:false };
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 if ($("#app-ver")) $("#app-ver").textContent = APP_VER;
+document.querySelectorAll(".ver-mobile").forEach(e => e.textContent = APP_VER);
 
 /* ---- tema ---- */
 function aplicarTema(t){ document.documentElement.setAttribute("data-theme", t);

@@ -6,7 +6,12 @@
 //   SUPABASE_URL  -> a URL do projeto (ex.: https://xxxx.supabase.co)
 //   SUPABASE_KEY  -> a chave "service_role" do Supabase (secreta)
 
+const exigirDono = require("./_porteiro");
+
 module.exports = async (req, res) => {
+  // Só o dono usa este servidor (confere o login antes de qualquer coisa)
+  if (!(await exigirDono(req, res))) return;
+
   const URL = process.env.SUPABASE_URL;
   const KEY = process.env.SUPABASE_KEY;
 
